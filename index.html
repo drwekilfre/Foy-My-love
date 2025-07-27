@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My World 💖</title>
+  <link href="https://fonts.googleapis.com/css2?family=Itim&family=Kanit:wght@500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --primary-pink: #ff6ec7;
+      --soft-pink: #ffeef6;
+      --accent-pink: #ffb6c1;
+      --heart-size: 20px;
+      --balloon-size: 40px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Itim', cursive;
+      overflow: hidden;
+      position: relative;
+      min-height: 100vh;
+    }
+    .sidebar {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      transition: all 0.5s ease;
+      z-index: 10;
+    }
+    .sidebar.slid {
+      top: 2rem; left: 2rem;
+      transform: none;
+      align-items: flex-start;
+    }
+    .sidebar h1 {
+      font-size: 3rem;
+      color: var(--primary-pink);
+      text-shadow: 2px 2px #fff0f5;
+      animation: bounce 1.2s infinite alternate ease-in-out;
+      display: inline-block;
+    }
+    @keyframes bounce { 0% { transform: translateY(0);} 100% { transform: translateY(-8px);} }
+    .buttons { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.75rem; }
+    .buttons button {
+      font-family: 'Kanit', cursive;
+      background: var(--accent-pink);
+      border: none;
+      padding: 0.75rem 1rem;
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 1rem;
+      letter-spacing: 1px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      animation: wiggle 2s infinite;
+      transition: transform 0.2s, background 0.3s;
+    }
+    @keyframes wiggle { 0% {rotate(0deg);}25%{rotate(2deg);}50%{rotate(-2deg);}75%{rotate(1deg);}100%{rotate(0deg);} }
+    .buttons button:hover { background: #ff8fa3; transform: scale(1.05) rotate(-2deg); }
+    .display {
+  position: relative;              /* ปรับจาก absolute → relative */
+  padding: 2rem 1rem;
+  text-align: center;
+  max-width: 100%;
+  max-height: 90vh;                /* จำกัดความสูงให้เต็มจอ */
+  overflow-y: auto;                /* ให้เลื่อนดูเนื้อหาได้ */
+  margin: 0 auto;
+}
+
+    .display img, .display video {
+      max-width: 80vw;
+      max-height: 60vh;
+      width: auto;
+      height: auto;
+      border-radius: 1rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    @keyframes fadeIn { from {opacity:0; transform: translateY(20px);} to {opacity:1; transform: translateY(0);} }
+    .for-you-button {
+      display: block;
+      margin: 1rem auto;
+      background: #fff3f8;
+      border: 1px dashed #f06292;
+      padding: 0.5rem 1rem;
+      border-radius: 30px;
+      color: #d81b60;
+      cursor: pointer;
+    }
+    .letter { margin:1rem auto; max-width:400px; background:#fff0f5; padding:1.5rem; border-radius:1rem; box-shadow:0 4px 8px rgba(0,0,0,0.1); white-space:pre-line; animation:slideUp 1s ease; max-height:60vh; overflow-y:auto; }
+    @keyframes slideUp { from{opacity:0;transform:translateY(50px);} to{opacity:1;transform:translateY(0);} }
+    #heartsContainer { position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:1; }
+    .background-heart { position:absolute; width:var(--heart-size); height:var(--heart-size); background:url('https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Red_Heart.svg/1024px-Red_Heart.svg.png') no-repeat center/contain; animation: floatBg 8s linear forwards; opacity:0.6; }
+    @keyframes floatBg { 0%{transform:translateY(100vh) scale(0.5);}100%{transform:translateY(-120vh) scale(1);opacity:0;} }
+    .floating-heart { position:absolute; background:url('https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Red_Heart.svg/1024px-Red_Heart.svg.png') no-repeat center/contain; animation: floatClick 3s ease-out forwards; pointer-events:none; z-index:9999; }
+    @keyframes floatClick { 0%{opacity:1;transform:scale(1);}100%{opacity:0;transform:translateY(-150px) scale(1.5);} }
+    .sparkle { position:absolute; width:15px;height:15px; background:radial-gradient(circle, rgba(255,192,203,1) 0%, rgba(255,255,255,0.8) 70%, transparent 100%); border-radius:50%; animation: sparkleUp 1.5s ease-out forwards; pointer-events:none; z-index:5; }
+    @keyframes sparkleUp { 0%{opacity:1;transform:scale(1);}100%{opacity:0;transform:translateY(-100px) scale(0.5);} }
+    .balloon-heart { position:absolute; width:var(--balloon-size); height:var(--balloon-size); background:url('https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Heart_shape_balloon.svg/800px-Heart_shape_balloon.svg.png') no-repeat center/contain; animation: floatBalloon 6s ease-out forwards; pointer-events:none; z-index:2; }
+    @keyframes floatBalloon { 0%{transform:translateY(100vh) translateX(0) scale(0.8);opacity:0.9;}50%{transform:translateY(50vh) translateX(20px) scale(1);opacity:1;}100%{transform:translateY(-100px) translateX(-20px) scale(1.1);opacity:0;} }
+    .flower { position:absolute; width:20px; height:20px; background:url('https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Cherry_Blossom.svg/240px-Cherry_Blossom.svg.png') no-repeat center/contain; opacity:0.7; pointer-events:none; }
+    .butterfly { position:absolute; width:30px; height:30px; background:url('https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Red_Butterfly.svg/120px-Red_Butterfly.svg.png') no-repeat center/contain; animation:fly 12s linear forwards; pointer-events:none; }
+    @keyframes fly { 0% {transform:translateX(-50px) translateY(0) scale(0.5);opacity:0;}50%{opacity:1;}100%{transform:translateX(100vw) translateY(-100px) scale(0.5);opacity:0;} }
+    #bg-video { position:fixed; top:0; left:0; width:100vw; height:100vh; object-fit:cover; z-index:-1; }.envelope .letter {
+  position: relative;
+  background: #fff0f5;
+  padding: 1.5rem;
+  margin-top: 60px;
+  border-radius: 1rem;
+  animation: slideUp 1s ease 1s forwards;
+  opacity: 0;
+  overflow-y: auto;
+  z-index: 1;
+  max-height: none;     /* ยกเลิกการจำกัดความสูง */
+}
+
+
+.envelope::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 50%;
+  background: #f06292;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  transform-origin: top;
+  animation: flapOpen 1s ease forwards;
+  z-index: 2;
+}
+
+@keyframes flapOpen {
+  0% { transform: rotateX(0deg); }
+  100% { transform: rotateX(180deg); }
+}
+
+@keyframes popEnvelope {
+  from { transform: scale(0.5); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+.envelope .letter {
+  position: relative;
+  background: #fff0f5;
+  padding: 1.5rem;
+  margin-top: 60px;
+  border-radius: 1rem;
+  animation: slideUp 1s ease 1s forwards;
+  opacity: 0;
+  max-height: 400px; /* เพิ่มความสูงของเนื้อหาด้านใน */
+  overflow-y: auto;
+  z-index: 1;
+}
+/* 🧧 โครงสร้างซองจดหมาย */
+.envelope {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  margin: 2rem auto;
+  perspective: 1000px;
+  animation: envelopePop 0.6s ease-out;
+}
+
+/* 🔺 ฝาซองพับเปิดแบบ 3D */
+.envelope::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  background: #f06292;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  transform-origin: top center;
+  transform: rotateX(0deg);
+  animation: flapOpen 1.2s ease-out forwards;
+  z-index: 2;
+  backface-visibility: hidden;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+}
+
+/* 💌 ตัวจดหมาย */
+.envelope .letter {
+  position: relative;
+  background: #fff0f5;
+  padding: 1.5rem;
+  margin-top: 60px;
+  border-radius: 1rem;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  opacity: 0;
+  transform: translateY(60px) scale(0.9);
+  animation: letterSlideUp 0.8s ease-out 1.2s forwards;
+  max-height: 60vh;
+  overflow-y: auto;
+  white-space: pre-line;
+  z-index: 1;
+}
+
+/* ✨ คีย์เฟรมทั้งหมด */
+@keyframes envelopePop {
+  from { transform: scale(0.5) rotate(-10deg); opacity: 0; }
+  to   { transform: scale(1) rotate(0); opacity: 1; }
+}
+
+@keyframes flapOpen {
+  0%   { transform: rotateX(0deg); }
+  100% { transform: rotateX(-150deg); }
+}
+
+@keyframes letterSlideUp {
+  0%   { opacity: 0; transform: translateY(60px) scale(0.9); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+.envelope {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  margin: 2rem auto;
+  perspective: 1000px;
+  animation: envelopePop 0.6s ease-out;
+}
+
+/* ฝาพับ */
+.envelope::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  background: #f06292;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  transform-origin: top center;
+  transform: rotateX(0deg);
+  animation: flapOpen 1.2s ease-out forwards;
+  z-index: 2;
+  backface-visibility: hidden;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+}
+
+/* ตัวซอง (พื้นหลังล่าง) */
+.envelope::after {
+  content: "";
+  position: absolute;
+  top: 25%;
+  left: 0;
+  width: 100%;
+  height: 75%;
+  background: #ffc1d9;
+  border-radius: 0 0 1rem 1rem;
+  box-shadow: inset 0 -2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 0;
+}
+
+/* จดหมายด้านใน */
+.envelope .letter {
+  position: relative;
+  background: #fff0f5;
+  padding: 1.5rem;
+  margin-top: 60px;
+  border-radius: 1rem;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  opacity: 0;
+  transform: translateY(60px) scale(0.9);
+  animation: letterSlideUp 0.8s ease-out 1.2s forwards;
+  max-height: 60vh;
+  overflow-y: auto;
+  white-space: pre-line;
+  z-index: 1;
+}
+
+/* Animation */
+@keyframes envelopePop {
+  from { transform: scale(0.5) rotate(-10deg); opacity: 0; }
+  to   { transform: scale(1) rotate(0); opacity: 1; }
+}
+
+@keyframes flapOpen {
+  0%   { transform: rotateX(0deg); }
+  100% { transform: rotateX(-150deg); }
+}
+
+@keyframes letterSlideUp {
+  0%   { opacity: 0; transform: translateY(60px) scale(0.9); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+
+
+
+
+    
+  </style>
+</head>
+<body>
+  <audio id="clickSound"
+         src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_4573e6123a.mp3?filename=message-pop-alert-129689.mp3"
+         preload="auto"></audio>
+
+  <audio id="bgMusic"
+         src="media/bg-music.mp3"
+         loop
+         preload="auto">
+    Your browser does not support the audio element.
+  </audio>
+
+  <div class="sidebar" id="resolutionPanel">
+    <h1>My World 💖</h1>
+    <div class="buttons">
+      <button onclick="showMedia('144p')">144p</button>
+      <button onclick="showMedia('240p')">240p</button>
+      <button onclick="showMedia('360p')">360p</button>
+      <button onclick="showMedia('480p')">480p</button>
+      <button onclick="showMedia('720p')">720p</button>
+      <button onclick="showMedia('1080p')">1080p</button>
+      <button onclick="showMedia('1440p')">1440p</button>
+    </div>
+  </div>
+
+  <div class="display" id="displayArea"></div>
+  <video id="bg-video" autoplay muted loop>
+    <source src="media/Generated File July 27, 2025 - 10_07AM.mp4" type="video/mp4"/>
+  </video>
+  <div id="decorContainer"></div>
+  <div id="heartsContainer"></div>
+
+  <script>
+  const bgMusic = document.getElementById('bgMusic');
+  bgMusic.volume = 0.5;
+  bgMusic.play().catch(() => {
+    const startOnClick = () => {
+      bgMusic.play().catch(console.error);
+      document.body.removeEventListener('click', startOnClick);
+    };
+    document.body.addEventListener('click', startOnClick);
+  });
+
+  const data = {
+    "144p":  { src: "media/144p.png" },
+    "240p":  { src: "media/240p.png" },
+    "360p":  { src: "media/360p.png" },
+    "480p":  { src: "media/480p.png" },
+    "720p":  { src: "media/720p.png" },
+    "1080p": { src: "media/1080p.png" }
+  };
+
+  function slideSidebar() {
+    document.getElementById('resolutionPanel').classList.add('slid');
+  }
+
+  function showMedia(res) {
+    slideSidebar();
+    const clickSound = document.getElementById("clickSound");
+    clickSound.currentTime = 0;
+    clickSound.play().catch(() => {});
+    const area = document.getElementById("displayArea");
+
+    if (res === '1440p') {
+      bgMusic.pause(); // หยุดเพลงเมื่อเปิด 1440p
+      area.innerHTML = `
+        <video
+          src="media/1440p.mp4"
+          autoplay
+          muted
+          loop
+          controls
+        ></video>
+        <button class="for-you-button" onclick="showLetter()">
+          For You 💌
+        </button>
+      `;
+    } else {
+      bgMusic.play().catch(() => {}); // กลับมาเล่นเพลงเมื่อเป็น resolution อื่น
+      area.innerHTML = `<img src="${data[res].src}" alt="${res}" />`;
+    }
+
+    spawnBackgroundHearts(5);
+  }
+
+  function showLetter() {
+  bgMusic.play().catch(() => {}); // เล่นเพลงพื้นหลัง
+
+  const area = document.getElementById("displayArea");
+  const letterHTML = `
+    <div class="envelope" id="envelopeBox">
+      <div class="letter">
+        <p><strong>แด่ปรียาภรณ์ที่รัก 💌</strong></p>
+        <p>ดิวขอโทษนะครับที่ไม่ได้เล่าบางสิ่งในชีวิตเค้าที่เกิดขึ้นให้บิวฟังทั้งหมด เค้าแค่ไม่อยากให้เธอเป็นห่วง ไม่อยากให้เธอเห็นเค้าตอนเหนื่อย ตอนเค้าลำบาก แต่เค้าลืมไปว่าคนที่รักกัน ก็ควรได้เห็นทั้งรอยยิ้มและน้ำตาของกันและกัน</p>
+        <p>เค้ารักบิวนะครับ และเค้าขอบคุณนะครับที่ยังอยู่ข้างๆ เค้า ต่อไปนี้เราจะไม่ปิดบังและไม่เล่าอะไรครึ่งๆ กลางๆ อีกแล้ว แต่เค้าจะไม่เล่าเลย หยอกเล่นนน 5555 แต่จะเล่าให้ฟังทุกเรื่องเลยครับ บิวเป็นหนึ่งคนที่สำคัญมากในชีวิตเค้านะครับ</p>
+        <p>อีกเรื่องบิวไม่ต้องคิดเลยนะครับว่าเค้าไม่รักบิวแล้ว เลิกความคิดนี้ไปเลยนะครับ เค้ารักบิวมากกว่าที่คำพูดจะอธิบายได้จริงๆ ทุกครั้งที่บิวเสียใจเพราะเค้า เค้าก็เสียใจไม่แพ้กัน บางทีเค้าอาจจะแสดงออกไม่เก่ง พูดไม่หวาน ไม่รู้จะอธิบายความรู้สึกยังไงให้ครบ แต่เค้าอยากให้บิวรู้ไว้เสมอว่าในหัวใจของเค้า มีบิวอยู่ตรงนั้นตลอด ไม่ว่าจะลำบากแค่ไหน เหนื่อยแค่ไหน เค้าอยากให้เราผ่านมันไปด้วยกัน</p>
+        <p>เค้าไม่ใช่คนที่สมบูรณ์แบบนะครับ แต่เค้าจะพยายามเป็นคนที่เหมาะสมสำหรับบิวให้ได้ เพราะบิวคือคนที่เค้ารักจริงๆ และไม่อยากเสียไปไม่ว่าจะด้วยเหตุผลอะไร ขอบคุณที่ยังจับมือเค้้าไว้ ขอบคุณที่ยังรักผู้ชายคนนี้นะครับ และถ้าบิวสงสัย อยากรู้อะไรก็ถามมาได้เลยนะครับ อย่าเก็บเอาไปคิดคนเดียว</p>
+        <p>สุดท้ายนี้เค้าอยากบอกว่า <strong>แค่มีบิวอยู่ตรงนี้</strong> เค้าก็รู้สึกว่าชีวิตมันไม่เหนื่อยอีกต่อไปแล้ว</p>
+        <p style="text-align: right;"><strong>รักเสมอ รักมาก และจะรักไปเรื่อยๆ</strong></p>
+        <p style="text-align: right; font-style: italic;">จากคนที่โชคดีที่สุด เพราะได้มีบิวอยู่ในชีวิต</p>
+      </div>
+    </div>
+  `;
+  area.insertAdjacentHTML('beforeend', letterHTML);
+
+  // 🎉 เพิ่มหัวใจทีละดวง + ประกาย จากตำแหน่ง envelope
+  setTimeout(() => {
+    const box = document.getElementById("envelopeBox");
+    if (box) {
+      const rect = box.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+
+      // 💖 หัวใจทีละดวง (ทุก 300ms)
+      for (let i = 0; i < 5; i++) {
+        setTimeout(() => {
+          spawnClickHearts(centerX, centerY, 1);
+        }, i * 300); // i = 0, 1, 2, 3, 4 → delay: 0, 300, 600, ...
+      }
+
+      // ✨ ประกายพร้อมกันทันที
+      spawnSparkles(centerX, centerY, 3);
+    }
+  }, 800); // หน่วงหลัง envelope slide animation
+}
+
+
+
+  function spawnBackgroundHearts(count=1) {
+    for (let i = 0; i < count; i++) {
+      const h = document.createElement('div');
+      h.className = 'background-heart';
+      h.style.left = Math.random() * 100 + '%';
+      document.getElementById('heartsContainer').appendChild(h);
+      setTimeout(() => h.remove(), 8000);
+    }
+  }
+  function releaseBackgroundHearts() { spawnBackgroundHearts(1); }
+  function releaseBalloons() {
+    const b = document.createElement('div');
+    b.className = 'balloon-heart';
+    b.style.left = (10 + Math.random() * 80) + '%';
+    document.getElementById('heartsContainer').appendChild(b);
+    setTimeout(() => b.remove(), 6000);
+  }
+  setInterval(releaseBackgroundHearts, 1000);
+  setInterval(releaseBalloons, 4000);
+
+  function spawnFlowers() {
+    for (let i = 0; i < 20; i++) {
+      const f = document.createElement('div');
+      f.className = 'flower';
+      f.style.left = Math.random() * 100 + '%';
+      f.style.top = Math.random() * 100 + '%';
+      document.getElementById('decorContainer').appendChild(f);
+    }
+  }
+  function spawnButterfly() {
+    const b = document.createElement('div');
+    b.className = 'butterfly';
+    b.style.top = Math.random() * 50 + '%';
+    document.getElementById('decorContainer').appendChild(b);
+    setTimeout(() => b.remove(), 12000);
+  }
+  spawnFlowers();
+  setInterval(spawnButterfly, 5000);
+
+  document.addEventListener('click', e => {
+    const x = e.clientX, y = e.clientY;
+    spawnClickHearts(x, y, 5);
+    spawnSparkles(x, y, 3);
+  });
+  function spawnClickHearts(x, y, n) {
+    for (let i = 0; i < n; i++) {
+      const h = document.createElement('div');
+      h.className = 'floating-heart';
+      const dx = (Math.random() - 0.5) * 30, dy = (Math.random() - 0.5) * 30;
+      const sz = 16 + Math.random() * 12;
+      h.style.width = sz + 'px'; h.style.height = sz + 'px';
+      h.style.left = (x + dx) + 'px'; h.style.top = (y + dy) + 'px';
+      document.body.appendChild(h);
+      setTimeout(() => h.remove(), 3000);
+    }
+  }
+  function spawnSparkles(x, y, n) {
+    for (let i = 0; i < n; i++) {
+      const s = document.createElement('div');
+      s.className = 'sparkle';
+      s.style.left = (x - 7 + Math.random() * 20 - 10) + 'px';
+      s.style.top = (y - 7 + Math.random() * 20 - 10) + 'px';
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 1500);
+    }
+  }
+</script>
+</body>
+</html>
